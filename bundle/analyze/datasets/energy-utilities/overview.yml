@@ -1,0 +1,54 @@
+version: datasets/v0.3
+title: "Energy and utilities: industry overview"
+questions: What does an energy and utilities organisation's data look like, and where does it come from?
+description: |
+  Industry context for this workspace, for the people and AI assistants working in it. It has no
+  query: it is a briefing to read before modelling or analysing this organisation's data.
+
+  ## Segments
+
+  Energy and utilities covers organisations that generate, move, sell or manage electricity, gas,
+  water and heat. The segments differ in which entities and metrics matter most:
+
+  - **Generation:** thermal, wind, solar, hydro and storage assets. Asset availability, output,
+    curtailment, fuel and market prices drive the data.
+  - **Networks (transmission and distribution):** electricity, gas and water networks. Assets,
+    faults, interruptions, connections, losses and regulated performance drive the data.
+  - **Retail supply:** selling energy or water to homes and businesses. Customers, supply points,
+    meters, tariffs, consumption, bills, payments and debt drive the data.
+  - **Trading and wholesale:** buying and selling energy forward and in balancing markets. Trades,
+    positions, nominations and imbalance drive the data.
+  - **Water and wastewater:** abstraction, treatment, distribution, leakage and sewerage. Assets,
+    flows, quality samples, pollution incidents and customer service drive the data.
+  - **Distributed energy and services:** EV charging, heat pumps, solar and batteries behind the
+    meter, flexibility and demand response. Devices, sessions and dispatch events drive the data.
+
+  ## Typical source systems
+
+  | System | Examples | What it holds |
+  |---|---|---|
+  | Customer information and billing (CIS) | SAP IS-U / SAP S/4HANA Utilities, Oracle Customer Cloud Service, Kraken, Gentrack Junifer | Customers, accounts, supply points, tariffs, bills, payments |
+  | Meter data management (MDM) | Itron, Oracle Utilities Meter Data Management, Siemens EnergyIP | Meter reads, interval consumption, validation and estimation |
+  | SCADA and historians | AVEVA PI System (formerly OSIsoft PI), GE Proficy Historian, the operator's SCADA | Time series of plant and network measurements |
+  | Asset management and work orders | IBM Maximo, SAP Plant Maintenance, IFS | Asset register, inspections, work orders, failures |
+  | Geographic information (GIS) | Esri ArcGIS, GE Smallworld | Network topology and asset locations |
+  | Outage management (OMS) / ADMS | GE, Oracle, Schneider Electric ADMS | Faults, outages, customers affected, restoration times |
+  | Energy trading and risk (ETRM) | Allegro, ION Openlink (Endur), Brady | Trades, positions, valuations, settlements |
+  | Market and settlement data | Elexon (BSC settlement), Xoserve (gas), EPEX SPOT, Nord Pool | Settlement volumes, imbalance prices, market prices |
+  | Smart metering | The DCC in Great Britain, head-end systems elsewhere | Smart meter reads, events, firmware |
+
+  ## What makes the data different
+
+  - **It is time series at fixed intervals.** Consumption and generation come as half-hourly (GB
+    settlement), 15-minute or 5-minute intervals, and SCADA at seconds. Gaps, duplicates and daylight
+    saving changes break naïve models.
+  - **Reads are estimated, validated and revised.** A meter read can be actual, estimated or replaced,
+    and settlement volumes are re-run months later. Keep every version.
+  - **Units and energy types differ.** kW and kWh, MW and MWh, gas in cubic metres converted to kWh
+    with a calorific value, water in megalitres. Never sum across them.
+  - **It is critical national infrastructure and heavily regulated.** Operational and customer data
+    need strong security and controlled access. See *Energy & utilities: handling the data*.
+
+  Related datasets: *data model*, *metrics*, *modelling it in dbt*, *handling the data*.
+
+  #energy-utilities #organisation-context

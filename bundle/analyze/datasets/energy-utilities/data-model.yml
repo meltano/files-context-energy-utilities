@@ -1,0 +1,44 @@
+version: datasets/v0.3
+title: "Energy and utilities: data model"
+questions: What are the core entities of energy and utilities data, and at what grain should each be modelled?
+description: |
+  The entities most energy and utilities data reduces to, with the grain and key of each. Use it to
+  map raw source tables onto a consistent model. Names are suggestions; keep the organisation's own
+  terms where they already exist.
+
+  | Entity | Grain (one row per…) | Notes |
+  |---|---|---|
+  | `customer` | person or business | Billing party. One customer can have several accounts and premises |
+  | `account` | billing account | Customer, payment method (direct debit, prepayment, on receipt), status |
+  | `premises` | property | Address and property reference (UPRN in Great Britain) |
+  | `supply_point` | metering point | The industry key: MPAN (electricity) or MPRN (gas) in Great Britain, SPID in the water retail market. Has a supply start and end per supplier |
+  | `meter` | physical meter | Serial number, type (smart, traditional, prepayment), registers. Meters are exchanged: keep the history per supply point |
+  | `meter_read` | register read | Read date, value, read type (actual, estimated, customer), validation status, version |
+  | `interval_consumption` | supply point per interval | Energy per half-hour or 15 minutes, with quality flags. The largest table |
+  | `tariff` (rate) | tariff version | Unit rates, standing charges, time-of-use bands, valid from and to |
+  | `bill` / `invoice` | bill | Period covered, consumption billed, charges, taxes, whether estimated |
+  | `payment` | payment | Amount, method, date. Allocated to bills and to debt |
+  | `asset` | asset | Turbine, transformer, cable section, pump, main. Type, location, install date, condition |
+  | `measurement` (SCADA tag) | tag per timestamp | From the historian. Keep the tag metadata (unit, asset, sample rate) in its own table |
+  | `outage` (interruption) | interruption event | Start and restoration times, customers affected, cause, planned or unplanned |
+  | `work_order` | work order | Asset, type (inspection, repair, replacement), dates, cost |
+  | `generation_output` | asset per settlement period | Metered output, availability, curtailment |
+
+  ## Relationships
+
+  - A **customer** has **accounts**; an account supplies one or more **premises** through **supply
+    points**.
+  - A supply point has a history of **meters**, and each meter produces **reads** and **interval
+    consumption**.
+  - **Bills** charge consumption at the **tariff** valid in each period; **payments** settle them.
+  - Network **assets** have **measurements**, **work orders** and **outages**; an outage affects the
+    supply points connected to the faulted part of the network.
+
+  ## Status and history
+
+  Supply points change supplier, meters are exchanged, tariffs change and reads are revised. Keep
+  effective-dated history for supply registrations, meter installations, tariffs and account status,
+  and keep every version of a read or settlement volume, so a bill or a settlement run can be
+  reproduced as at a date.
+
+  #energy-utilities #organisation-context

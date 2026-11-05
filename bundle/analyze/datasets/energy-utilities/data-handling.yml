@@ -1,0 +1,49 @@
+version: datasets/v0.3
+title: "Energy and utilities: handling the data"
+questions: What care does energy and utilities data need in the warehouse?
+description: |
+  Energy and utilities data combines customers' personal data, consumption that reveals how people
+  live, and operational data about critical infrastructure. These are general practices for a
+  warehouse holding it. They are not legal, compliance or safety advice: the organisation's
+  compliance and security teams decide what applies to it.
+
+  ## Classify the data
+
+  | Class | Examples | Handling |
+  |---|---|---|
+  | Operational technology (OT) data | SCADA measurements, network topology, control settings, protection settings | Treat as security sensitive. Load only what analysis needs, through a one-way path out of the OT network, and restrict access |
+  | Detailed consumption | Half-hourly or finer smart meter data for homes | Personal data: it reveals occupancy and habits. Aggregate or anonymise unless the customer has agreed to its use |
+  | Vulnerability and priority services | Priority Services Register entries, medical dependence on electricity, disability, financial hardship | Special category or highly sensitive. Restrict to the roles that need it |
+  | Personal data | Name, address, contact details, date of birth | Restrict access, mask in non-production and in marts that do not need it |
+  | Payment data | Bank details, card data | Never load full card numbers. Mask bank details outside payment models |
+  | Market-sensitive data | Trading positions, outage plans, generation availability before publication | Restrict to the roles that need it until published |
+
+  ## Practices
+
+  - **Least privilege.** Separate raw, staging and mart schemas, and grant raw schemas only to the
+    pipelines and the people who maintain them.
+  - **Separate IT from OT.** Pipelines must not open inbound paths into control networks. Pull from a
+    historian copy or a data diode-protected replica, not from control systems.
+  - **Mask by default.** Hash or mask customer identifiers and supply point IDs in shared marts, and
+    give unmasked access by role.
+  - **No production data in development** without masking.
+  - **Retention.** Billing, settlement and regulatory records are often kept for years; smart meter
+    data at fine granularity should be kept only as long as its purpose needs. Agree retention with
+    the organisation.
+  - **Data subject requests.** Under GDPR and UK GDPR a customer can ask for their data or for its
+    erasure, so know where each person's data lives.
+
+  ## Regulators and rules to be aware of
+
+  Which apply depends on the organisation's country and activities. Common ones:
+
+  - **UK:** UK GDPR; Ofgem (energy) and Ofwat (water in England and Wales) licence conditions and
+    performance reporting; the Smart Energy Code and its rules on access to consumption data; the
+    Network and Information Systems (NIS) Regulations 2018 for operators of essential services; REMIT
+    for wholesale energy markets.
+  - **EU:** GDPR, the NIS2 Directive, REMIT, and the Critical Entities Resilience Directive.
+  - **US:** FERC and state public utility commissions; NERC CIP standards for the bulk electric
+    system; state privacy laws on customer energy usage data.
+  - **Card payments everywhere:** PCI DSS.
+
+  #energy-utilities #organisation-context

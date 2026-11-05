@@ -1,0 +1,52 @@
+version: datasets/v0.3
+title: "Energy and utilities: key metrics"
+questions: Which metrics does an energy and utilities organisation run on, and how is each calculated?
+description: |
+  Standard definitions of the metrics energy and utilities organisations report. Confirm each one
+  with the operations, regulation or finance team before building it: regulators define many of them
+  precisely, and organisations differ on exclusions such as severe weather events.
+
+  ## Generation and assets
+
+  | Metric | Definition |
+  |---|---|
+  | Capacity factor (load factor) | Energy generated ÷ (installed capacity × hours in the period) |
+  | Availability | Hours an asset was able to generate ÷ hours in the period. Time-based or energy-based: say which |
+  | Curtailment | Energy the asset could have generated but was instructed not to (estimated from available capacity) |
+  | Heat rate (thermal) | Fuel energy input ÷ electricity generated. Lower is more efficient |
+  | Mean time between failures (MTBF) | Operating hours ÷ number of failures, per asset class |
+
+  ## Networks and reliability
+
+  | Metric | Definition |
+  |---|---|
+  | SAIDI | Total customer minutes lost ÷ customers served. The average minutes without supply per customer |
+  | SAIFI | Total customer interruptions ÷ customers served. GB electricity regulation uses the similar customer minutes lost (CML) and customer interruptions (CI) per 100 customers |
+  | CAIDI | SAIDI ÷ SAIFI. Average restoration time per interruption |
+  | Network losses | (Energy entering the network − energy delivered to customers) ÷ energy entering |
+  | Leakage (water) | Water lost from the network, in megalitres per day, usually as a three-year average. Water companies also report it per property or per km of main |
+  | Supply interruptions (water) | Average minutes lost per property from interruptions of three hours or more |
+
+  ## Supply and customers
+
+  | Metric | Definition |
+  |---|---|
+  | Consumption | Energy delivered in the period, by customer segment and tariff. Weather-normalise before comparing years |
+  | Peak demand | Highest interval demand in the period, in kW or MW |
+  | Read rate | Supply points with an actual (not estimated) read in the period ÷ all supply points |
+  | Smart meter penetration | Supply points with a working smart meter in smart mode ÷ all supply points |
+  | Estimated bill rate | Bills based on estimated reads ÷ all bills |
+  | Customer churn (switching) | Supply points lost to another supplier ÷ supply points at the start of the period |
+  | Bad debt and arrears | Value of debt overdue (often 90+ days) ÷ annual billed revenue; and accounts in arrears ÷ all accounts |
+  | Gross margin per supply point | (Revenue − wholesale, network and policy costs) ÷ average supply points |
+  | Complaints per 100,000 customers | Complaints received ÷ customers × 100,000 |
+
+  ## Trading and carbon
+
+  | Metric | Definition |
+  |---|---|
+  | Hedge cover | Volume of forecast demand (or generation) already traded forward ÷ forecast volume, per delivery period |
+  | Imbalance volume and cost | Contracted − metered volume per settlement period, and the cost at the imbalance price |
+  | Carbon intensity | Emissions (gCO₂e) ÷ energy generated or supplied (kWh) |
+
+  #energy-utilities #organisation-context

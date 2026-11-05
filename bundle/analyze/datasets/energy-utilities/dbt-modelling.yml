@@ -1,0 +1,71 @@
+version: datasets/v0.3
+title: "Energy and utilities: modelling it in dbt"
+questions: How should raw energy and utilities data be modelled in dbt so that it reconciles?
+description: |
+  Conventions for building dbt models on raw energy and utilities data. They apply on top of the
+  workspace's usual dbt layout: staging, then intermediate, then marts.
+
+  ## Intervals and time
+
+  - **Store interval data as interval start (or end) in UTC, and say which.** Sources disagree:
+    GB settlement periods are numbered 1–48 from local midnight, while many devices timestamp the end
+    of the interval. Normalise once, in staging.
+  - **Daylight saving days have 46 or 50 half-hours** in the UK (and 23 or 25 hours elsewhere). Build a
+    settlement period calendar rather than assuming 48 per day, and test the count per day against it.
+  - **Fill gaps explicitly.** Generate the full interval spine per supply point and left-join the
+    data, so missing intervals show as nulls with a flag, not as missing rows.
+  - Aggregate interval data to daily or monthly grain in intermediate models; marts should not scan
+    raw intervals.
+
+  ## Reads, versions and estimation
+
+  - Keep the **read type** (actual, estimated, customer, deemed) and **validation status** on every
+    read and interval. Reports often must separate actual from estimated consumption.
+  - **Reads and settlement volumes are revised.** Load them append-only with a version or run
+    identifier (for example the settlement run), and build "latest version" models on top. Never
+    overwrite the earlier version.
+  - **Meter exchanges reset registers.** Derive consumption from reads within one meter's life only;
+    do not subtract a new meter's read from the old meter's.
+  - Watch for **register rollover** (a read that falls because the register wrapped round) and
+    multiplier or CT ratio factors on business meters.
+
+  ## Units and conversion
+
+  - Name every quantity column for its unit (`energy_kwh`, `demand_kw`, `volume_m3`, `flow_ml_d`).
+  - **Gas volume to energy:** kWh = m³ × volume correction factor × calorific value (MJ/m³) ÷ 3.6.
+    Keep the calorific value used, which changes daily by region.
+  - Keep **energy (kWh) and power (kW)** strictly apart: summing kW across intervals is not energy.
+
+  ## SCADA and historian data
+
+  - Historians store values on change or compress them, not at fixed intervals. Resample to a regular
+    interval with an explicit method (last value, time-weighted average) and keep the method.
+  - Keep tag metadata (unit, asset, scale) in a dimension, and map tags to assets with a mapping table.
+
+  ## Tests
+
+  Add these beside the usual `unique` and `not_null` tests:
+
+  - **Interval completeness:** the expected number of intervals per supply point per day, given the
+    calendar.
+  - **Read monotonicity:** cumulative register reads do not decrease within one meter's life, except
+    for flagged rollovers.
+  - **Settlement agreement:** total consumption per period agrees with the settlement or billing
+    total, within an agreed tolerance.
+  - **Range checks:** no negative consumption on import-only meters; demand within the connection
+    capacity.
+  - **Accepted values** on read types, meter types and outage causes.
+  - **Freshness** on interval and SCADA sources, which lag when communications fail.
+
+  ## Naming
+
+  - Prefix models by layer (`stg_`, `int_`, `fct_`, `dim_`), and name facts for their grain:
+    `fct_interval_consumption`, `fct_meter_reads`, `fct_bills`, `fct_outages`.
+
+  ## Sensitive columns
+
+  Tag personal columns, vulnerability flags and fine-grained consumption in the model YAML (for
+  example `meta: {pii: true}`) and keep them out of marts that do not need them. See *Energy &
+  utilities: handling the data*.
+
+  #energy-utilities #organisation-context
