@@ -41,7 +41,7 @@ description: |
 
   - **It is time series at fixed intervals.** Consumption and generation come as half-hourly (GB
     settlement), 15-minute or 5-minute intervals, and SCADA at seconds. Gaps, duplicates and daylight
-    saving changes break naïve models.
+    saving changes (in the UK, between GMT and BST = GMT+01:00) break naïve models.
   - **Reads are estimated, validated and revised.** A meter read can be actual, estimated or replaced,
     and settlement volumes are re-run months later. Keep every version.
   - **Units and energy types differ.** kW and kWh, MW and MWh, gas in cubic metres converted to kWh
